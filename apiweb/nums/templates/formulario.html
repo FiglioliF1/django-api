@@ -1,0 +1,45 @@
+{% load static %}
+<html>
+<div class="row">
+<div class="col-xs-1" align="center">
+    {%if error != null %}
+       <h1>{{ error }}</h1>
+       <br>
+    {% endif %}
+    <head>
+        <title>
+            Carga de datos
+        </title>
+    </head>
+    <body style="margin-top: 30px;margin-left: 30px;">
+        <form class="smallwidth" action="{% url 'carga' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <h3 class="formheader"> Carga de datos</h3>
+            <input type="file"
+                   title="Carga de datos"
+                   name="file"
+                   style="border: 1px solid black; padding: 5px;"
+                   required="required">
+            <p>
+            <input type="submit"
+                   value="Subir"
+                   style="border: 1px solid green; padding:5px; border-radius: 2px; cursor: pointer;">
+        </form>
+
+        <p></p>
+
+        {% for row in data %}
+          {{ row }}
+          <br>
+          {% endfor %}
+        <!-- {% for row in data %}
+            {% for cell in row %}
+                {{ cell }}&nbsp;&nbsp;
+            {% endfor %}
+            <br>
+        {% endfor %}
+        -->
+    </body>
+  </div>
+  </div>
+</html>
