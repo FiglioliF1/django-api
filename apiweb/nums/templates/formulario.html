@@ -14,6 +14,9 @@
     .navbar {
       margin-bottom: 0;
       border-radius: 0;
+      width: 100%;
+      background: #9aca3c;
+      position: fixed;
     }
 
    .mi-fuente {
@@ -25,14 +28,26 @@
 
     /* Set height of the grid so .sidenav can be 100% (adjust as needed)*/
     .row.content {
-      height: 700px
+      height: 600px
     }
 
     /* Set gray background color and 100% height */
-    .sidenav {
+    .sidenav1 {
       padding-top: 20px;
-      background-color: #f1f1f1;
+      background-color: #f0f0f0;
       height: 100%;
+      position: fixed;
+      top: 132;
+      right: 0;
+
+    }
+    .sidenav2 {
+      padding-top: 20px;
+      background-color: #f0f0f0;
+      height: 100%;
+      position: fixed;
+      top: 132;
+      left: 0;
     }
 
     /* Set black background color, white text and some padding */
@@ -53,7 +68,7 @@
   </style>
 </head>
 <body>
-    <nav class="navbar" style="background-color: #9aca3c;">
+    <nav class="navbar navbar-static-top">
       <div class="container-fluid">
         <div class="navbar-header">
           <img src=" {% static 'nums/logo_gba_footer.svg' %}" class="img-fluid">
@@ -63,22 +78,23 @@
             <span class="icon-bar"></span>
           </button> -->
         </div>
-        <div class="collapse navbar-collapse" id="myNavbar">
-          <ul class="nav navbar-nav">
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <!--<li><a href="#"><span class="glyphicon glyphicon-log-in"> </span> Login</a></li>-->
-          </ul>
-        </div>
       </div>
     </nav>
-    <div class="container-fluid text-center">
+    <div class="container-fluid">
       <div class="row content">
-        <div class="col-sm-2 sidenav">
+        <div class="col-sm-2">
           <!-- Aca van los links a la izquierda-->
         </div>
 
         <div class="col-sm-8" align="center">
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
           <form class="smallwidth" action="{% url 'carga' %}" method="post" enctype="multipart/form-data">
               {% csrf_token %}
               <h3 class="formheader" style="font-family: 'Ubuntu';
@@ -104,7 +120,6 @@
             <br>
             <div class="row content">
             <div class="col-md-4">
-                <!-- Aca van los links a la izquierda-->
             </div>
             <div class="col-md-4">
             <table class="table table-bordered" style="align-content: center;">
@@ -114,18 +129,16 @@
              </table>
             </div>
             <div class="col-md-4">
-                <!-- Aca van los links a la izquierda-->
             </div>
             </div>
-
           {% endif %}
           {% for row in data %}
             {{ row }}
             <br>
           {% endfor %}
-        </div>
-
-        <div class="col-sm-2 sidenav">
+          </div>
+        <div class="col-sm-2 sidenav2" align="center">
+            <a type="button" href="/" class="btn btn-light" style="font-family: 'Ubuntu'">Inicio</a>
         </div>
       <footer class="navbar-fixed-bottom text-center" style="background-color: #444;">
         <p style="font-size: 16px; font-family: 'Ubuntu';">Dirección Provincial de Telecomunicaciones</p>

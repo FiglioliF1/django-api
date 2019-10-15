@@ -45,6 +45,8 @@ def index(request):
             return render(request,template,{"error":"No encontrado"})
     else:
         try:
+            if not abrev.startswith("*"):
+                abrev = "*" + abrev
             n = Numero.objects.get(abrev = abrev)
             return render(request,template,{"num":n.numero,"abrev":n.abrev})
         except:
