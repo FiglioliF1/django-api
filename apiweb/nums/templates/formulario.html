@@ -1,45 +1,148 @@
 {% load static %}
 <html>
-<div class="row">
-<div class="col-xs-1" align="center">
-    {%if error != null %}
-       <h1>{{ error }}</h1>
-       <br>
-    {% endif %}
-    <head>
-        <title>
-            Carga de datos
-        </title>
-    </head>
-    <body style="margin-top: 30px;margin-left: 30px;">
-        <form class="smallwidth" action="{% url 'carga' %}" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <h3 class="formheader"> Carga de datos</h3>
-            <input type="file"
-                   title="Carga de datos"
-                   name="file"
-                   style="border: 1px solid black; padding: 5px;"
-                   required="required">
-            <p>
-            <input type="submit"
-                   value="Subir"
-                   style="border: 1px solid green; padding:5px; border-radius: 2px; cursor: pointer;">
-        </form>
+<head>
+      <title>
+          Carga de datos
+      </title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<style>
+    /* Remove the navbar's default margin-bottom and rounded borders */
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
 
-        <p></p>
+   .mi-fuente {
+     font-family: 'Ubuntu';
+     font-style:  normal;
+     font-size: 18px;"
+   }
 
-        {% for row in data %}
-          {{ row }}
+
+    /* Set height of the grid so .sidenav can be 100% (adjust as needed)*/
+    .row.content {
+      height: 700px
+    }
+
+    /* Set gray background color and 100% height */
+    .sidenav {
+      padding-top: 20px;
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height:auto;}
+    }
+  </style>
+</head>
+<body>
+    <nav class="navbar" style="background-color: #9aca3c;">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <img src=" {% static 'nums/logo_gba_footer.svg' %}" class="img-fluid">
+          <!--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+             <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button> -->
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+          <ul class="nav navbar-nav">
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <!--<li><a href="#"><span class="glyphicon glyphicon-log-in"> </span> Login</a></li>-->
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="container-fluid text-center">
+      <div class="row content">
+        <div class="col-sm-2 sidenav">
+          <!-- Aca van los links a la izquierda-->
+        </div>
+
+        <div class="col-sm-8" align="center">
+          <form class="smallwidth" action="{% url 'carga' %}" method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              <h3 class="formheader" style="font-family: 'Ubuntu';
+                                            font-style:  normal;
+                                            font-size: 24px;"> Carga de datos</h3>
+              <br>
+              <input type="file"
+                     title="Carga de datos"
+                     name="file"
+                     style="border: 1px solid black; padding: 5px;"
+                     required="required">
+              <p>
+              <br>
+              <input type="submit"
+                     value="Subir"
+                     style="border: 1px solid green; padding:5px; border-radius: 2px; cursor: pointer;">
+          </form>
+
+          <p></p>
           <br>
-          {% endfor %}
-        <!-- {% for row in data %}
-            {% for cell in row %}
-                {{ cell }}&nbsp;&nbsp;
-            {% endfor %}
+
+          {%if error != null %}
             <br>
-        {% endfor %}
-        -->
-    </body>
-  </div>
-  </div>
+            <div class="row content">
+            <div class="col-md-4">
+                <!-- Aca van los links a la izquierda-->
+            </div>
+            <div class="col-md-4">
+            <table class="table table-bordered" style="align-content: center;">
+               <tr>
+                 <td style="font-family: 'Ubuntu'; color: red; text-align: center">{{ error }}</td>
+               </tr>
+             </table>
+            </div>
+            <div class="col-md-4">
+                <!-- Aca van los links a la izquierda-->
+            </div>
+            </div>
+
+          {% endif %}
+          {% for row in data %}
+            {{ row }}
+            <br>
+          {% endfor %}
+        </div>
+
+        <div class="col-sm-2 sidenav">
+        </div>
+      <footer class="navbar-fixed-bottom text-center" style="background-color: #444;">
+        <p style="font-size: 16px; font-family: 'Ubuntu';">Dirección Provincial de Telecomunicaciones</p>
+      </footer>
+      </div>
+    </div>
+</body>
 </html>
+
+<!--
+    <!- {% for row in data %}
+        {% for cell in row %}
+            {{ cell }}&nbsp;&nbsp;
+        {% endfor %}
+        <br>
+    {% endfor %}
+    ->
+
+
+-->
