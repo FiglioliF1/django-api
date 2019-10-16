@@ -132,10 +132,25 @@
             </div>
             </div>
           {% endif %}
-          {% for row in data %}
-            {{ row }}
-            <br>
-          {% endfor %}
+          {% if data != null %}
+            <h3 class="text-center" style="font-family: 'Ubuntu'">Cargado:<h2>
+            <table class="table table-bordered" style="align-content: center;">
+            <thead>
+              <tr>
+                <th scope="col">Número</th>
+                <th scope="col">Abreviado</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for num,abrev in data %}
+              <tr class="{{ valores }}">
+                <td>{{ num }}</td>
+                <td>{{ abrev }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+          {% endif %}
           </div>
         <div class="col-sm-2 sidenav2" align="center">
             <a type="button" href="/" class="btn btn-light" style="font-family: 'Ubuntu'">Inicio</a>

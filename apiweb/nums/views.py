@@ -22,9 +22,11 @@ def carga(request):
     for i in range(filas):
         num = unidecode.unidecode(str(hoja.cell_value(i,0)))
         abrev = unidecode.unidecode(str(hoja.cell_value(i,1)))
+        if not num.isnumeric():
+            continue
         try:
             Numero.objects.get_or_create(numero=num,abrev=abrev)
-            aux.append(str(num) + " - " + str(abrev))
+            aux.append(tuple([str(num),str(abrev)]))
             print(str(i) + ") Entrada creada (" + str(num) + " - " + str(abrev) + ")")
         except:
             print("Error con la linea: " + str(i))
