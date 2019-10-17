@@ -7,6 +7,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+      <link rel="shortcut icon" href=" {% static 'nums/favicon.ico.png' %}" type="image/x-icon">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 <style>
@@ -95,7 +96,7 @@
           <br>
           <br>
           <br>
-          <form class="smallwidth" action="{% url 'carga' %}" method="post" enctype="multipart/form-data">
+          <form class="smallwidth" action="{% url 'load' %}" method="post" enctype="multipart/form-data">
               {% csrf_token %}
               <h3 class="formheader" style="font-family: 'Ubuntu';
                                             font-style:  normal;
@@ -154,6 +155,8 @@
           </div>
         <div class="col-sm-2 sidenav2" align="center">
             <a type="button" href="/" class="btn btn-light" style="font-family: 'Ubuntu'">Inicio</a>
+            <br>
+            <a type="button" href="/edit" class="btn btn-light" style="font-family: 'Ubuntu'">Editar items</a>
         </div>
       <footer class="navbar-fixed-bottom text-center" style="background-color: #444;">
         <p style="font-size: 16px; font-family: 'Ubuntu';">Dirección Provincial de Telecomunicaciones</p>
@@ -162,15 +165,3 @@
     </div>
 </body>
 </html>
-
-<!--
-    <!- {% for row in data %}
-        {% for cell in row %}
-            {{ cell }}&nbsp;&nbsp;
-        {% endfor %}
-        <br>
-    {% endfor %}
-    ->
-
-
--->

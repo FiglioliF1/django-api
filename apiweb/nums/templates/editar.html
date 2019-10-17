@@ -1,0 +1,172 @@
+{% load static %}
+<html>
+<head>
+      <title>
+          Editar datos
+      </title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+      <link rel="shortcut icon" href=" {% static 'nums/favicon.ico.png' %}" type="image/x-icon">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+      <script type="text/javascript">
+        $(document).ready(function(){
+        	$('[data-toggle="tooltip"]').tooltip();
+        	var actions = $("table td:last-child").html();
+          $(document).on("click", ".delete", function(){
+            $(this).parents("tr").remove();
+          $(".add-new").removeAttr("disabled");
+          });
+          $(document).on("click", ".add", function(){
+        		var empty = false;
+        		var input = $(this).parents("tr").find('input[type="text"]');
+                input.each(function(){
+        			if(!$(this).val()){
+        				$(this).addClass("error");
+        				empty = true;
+        			} else{
+                        $(this).removeClass("error");
+                    }
+        		});
+        		$(this).parents("tr").find(".error").first().focus();
+        		if(!empty){
+        			input.each(function(){
+        				$(this).parent("td").html($(this).val());
+        			});
+        			$(this).parents("tr").find(".add, .edit").toggle();
+        			$(".add-new").removeAttr("disabled");
+        		}
+          });
+          $(document).on("click", ".edit", function(){
+            $(this).parents("tr").find("td:not(:last-child)").each(function(){
+        		$(this).html('<input type="text" class="form-control" value="' + $(this).text() + '">');
+        		});
+        		$(this).parents("tr").find(".add, .edit").toggle();
+        		$(".add-new").attr("disabled", "disabled");
+          });
+        });
+      </script>
+      <style>
+          /* Remove the navbar's default margin-bottom and rounded borders */
+          .navbar {
+            margin-bottom: 0;
+            border-radius: 0;
+            width: 100%;
+            background: #9aca3c;
+            position: fixed;
+          }
+
+         .mi-fuente {
+           font-family: 'Ubuntu';
+           font-style:  normal;
+           font-size: 18px;"
+         }
+
+
+          /* Set height of the grid so .sidenav can be 100% (adjust as needed)*/
+          .row.content {
+            height: 600px
+          }
+
+          table.table td .add {
+        		display: none;
+        	}
+
+          /* Set gray background color and 100% height */
+          .sidenav1 {
+            padding-top: 20px;
+            background-color: #f0f0f0;
+            height: 100%;
+            position: fixed;
+            top: 132;
+            right: 0;
+
+          }
+          .sidenav2 {
+            padding-top: 20px;
+            background-color: #f0f0f0;
+            height: 100%;
+            position: fixed;
+            top: 132;
+            left: 0;
+          }
+
+          /* Set black background color, white text and some padding */
+          footer {
+            background-color: #555;
+            color: white;
+            padding: 15px;
+          }
+
+          /* On small screens, set height to 'auto' for sidenav and grid */
+          @media screen and (max-width: 767px) {
+            .sidenav {
+              height: auto;
+              padding: 15px;
+            }
+            .row.content {height:auto;}
+          }
+  </style>
+</head>
+<body>
+    <nav class="navbar navbar-static-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <img src=" {% static 'nums/logo_gba_footer.svg' %}" class="img-fluid">
+        </div>
+      </div>
+    </nav>
+    <div class="container-fluid">
+      <div class="row content">
+        <div class="col-sm-2">
+          <!-- Aca van los links a la izquierda-->
+        </div>
+        <div class="col-sm-8"  style="font-family: 'Ubuntu'">
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <h2>Base de datos:</h2>
+            <br>
+            <table class="table table-bordered table-editable">
+                <thead>
+                  <tr>
+                      <th width="45%">Número</th>
+                      <th width="35%">Abreviado</th>
+                      <th width="20%">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for num,abrev in nums %}
+                    <tr>
+                      <td>{{ num }}</td>
+                      <td>{{ abrev }}</td>
+                      <td>
+                        <span class="add" data-toggle="tooltip"><button type="button"
+                          class="btn btn-success btn-sm">Hecho</button></span>
+                        <span class="edit" data-toggle="tooltip"><button type="button"
+                          class="btn btn-warning btn-sm">Editar</button></span>
+                        <span class="delete"><button type="button"
+                          class="btn btn-danger btn-sm">Eliminar</button></span>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-sm-2 sidenav2" align="center">
+            <a type="button" href="/" class="btn btn-light" style="font-family: 'Ubuntu'">Inicio</a>
+            <br>
+            <a type="button" href="/load" class="btn btn-light" style="font-family: 'Ubuntu'">Cargar datos</a>
+        </div>
+      <footer class="navbar-fixed-bottom text-center" style="background-color: #444;">
+        <p style="font-size: 16px; font-family: 'Ubuntu';">Dirección Provincial de Telecomunicaciones</p>
+      </footer>
+      </div>
+    </div>
+</body>
+</html>

@@ -5,7 +5,17 @@ from xlrd import open_workbook
 import unidecode
 
 # Create your views here.
-def carga(request):
+def edit(request):
+    template = "editar.html"
+    nums = []
+    for i in Numero.objects.all():
+        if i.numero.isnumeric():
+            nums.append(tuple([str(i.numero),str(i.abrev)]))
+    if request.method == 'GET':
+        return render(request, template, {"nums":nums})
+    return render(request, template, {})
+
+def load(request):
     template = "formulario.html"
     if request.method == 'GET':
         return render(request, template, {})
