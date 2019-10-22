@@ -1,19 +1,35 @@
 from django.shortcuts import render
 from django.contrib import messages
 from nums.models import Numero
+from rest_framework.response import Response
+from django.http import HttpResponse
 from xlrd import open_workbook
 import unidecode
 
 # Create your views here.
+def delete(request):
+    num_id = request.POST.get('num_id')
+    obj = Numero.objects.get(num_id=num_id)
+    obj.delete()
+    return HttpResponse("Eliminado")
+
 def edit(request):
     template = "editar.html"
     nums = []
     for i in Numero.objects.all():
         if i.numero.isnumeric():
-            nums.append(tuple([str(i.numero),str(i.abrev)]))
+            nums.append(tuple([str(i.num_id),str(i.numero),str(i.abrev)]))
     if request.method == 'GET':
         return render(request, template, {"nums":nums})
-    return render(request, template, {})
+    num_id = request.POST.get('num_id')
+    num = request.POST.get('num')
+    abrev = request.POST.get('abrev')
+    obj = Numero.objects.get(num_id=num_id)
+    obj.numero = num
+    obj.abrev = abrev
+    print("id: " + str(obj.num_id)+ " - Num: " + str(obj.numero) + " - Abrev: " + str(abrev))
+    obj.save()
+    return HttpResponse("Actualizado")
 
 def load(request):
     template = "formulario.html"

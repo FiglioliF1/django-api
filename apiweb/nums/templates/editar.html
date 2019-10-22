@@ -11,7 +11,72 @@
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
       <script type="text/javascript">
-        $(document).ready(function(){
+          $(document).ready(function(){
+              $('[data-toggle="tooltip"]').tooltip();
+              var actions = $("table td:last-child").html();
+          });
+          function eliminarNumero(num_id) {
+            aux1 = document.getElementById(num_id);
+            $(aux1).parents("tr").remove();
+            $.ajax({
+               url: '/delete/',
+               //data: {'num_id':num_id, 'num': numEditable, "abrev": abrevEditable, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+               data: { "num_id" : num_id,
+                       "csrfmiddlewaretoken" : '{{ csrf_token }}',
+               },
+               method: 'post'
+             }).done(function(response){
+               console.log(response);
+             });
+          }
+          function editarNumero(num_id) {
+            var ind = 0
+            aux1 = document.getElementById(num_id);
+            $(aux1).parents("tr").find("td:not(:last-child)").each(function(){
+            $(this).html('<input type="text" id="' + ind + '-' + num_id + '" class="form-control" value="' + $(this).text() + '">');
+            ind = ind + 1;
+            });
+            $(aux1).parents("tr").find(".add, .edit").toggle();
+          }
+          function guardarNumero(num_id) {
+            //var csrftoken = $('[name="csrfmiddlewaretoken"]').val();
+            var empty = false;
+            num = document.getElementById("0-" + num_id).value;
+            abrev = document.getElementById("1-" + num_id).value;
+            //window.alert();
+            $.ajax({
+               url: '/edit/',
+               //data: {'num_id':num_id, 'num': numEditable, "abrev": abrevEditable, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+               data: { "num_id" : num_id,
+                       "num" : num,
+                       "abrev" : abrev,
+                       "csrfmiddlewaretoken" : '{{ csrf_token }}',
+              },
+               method: 'post'
+             }).done(function(response){
+               console.log(response);
+             });
+           		var input = $(aux1).parents("tr").find('input[type="text"]');
+                 input.each(function(){
+           			if(!$(this).val()){
+           				$(this).addClass("error");
+           				empty = true;
+           			} else{
+                           $(this).removeClass("error");
+                       }
+           		});
+           		$(aux1).parents("tr").find(".error").first().focus();
+           		if(!empty){
+           			input.each(function(){
+           				$(this).parent("td").html($(this).val());
+           			});
+         			$(aux1).parents("tr").find(".add, .edit").toggle();
+           		}
+          }
+        /*$(document).ready(function(){
+          var num_id = 0;
+          var num = 0;
+          var abrev = 0;
         	$('[data-toggle="tooltip"]').tooltip();
         	var actions = $("table td:last-child").html();
           $(document).on("click", ".delete", function(){
@@ -21,7 +86,7 @@
           $(document).on("click", ".add", function(){
         		var empty = false;
         		var input = $(this).parents("tr").find('input[type="text"]');
-                input.each(function(){
+              input.each(function(){
         			if(!$(this).val()){
         				$(this).addClass("error");
         				empty = true;
@@ -37,6 +102,16 @@
         			$(this).parents("tr").find(".add, .edit").toggle();
         			$(".add-new").removeAttr("disabled");
         		}
+            num = $(this).parents("tr").find(".num").innerHTML;
+            abrev = $(this).parents("tr").find(".abrev").innerHTML;
+            num_id = $(this).parents("tr").find(".num_id").innerHTML;
+            $.ajax({
+               url: '/edit/',
+               data: {'num_id':num_id, 'num': num, "abrev": abrev, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+               method: 'post'
+             }).done(function(response){
+               console.log(response);
+             });
           });
           $(document).on("click", ".edit", function(){
             $(this).parents("tr").find("td:not(:last-child)").each(function(){
@@ -45,7 +120,7 @@
         		$(this).parents("tr").find(".add, .edit").toggle();
         		$(".add-new").attr("disabled", "disabled");
           });
-        });
+        });*/
       </script>
       <style>
           /* Remove the navbar's default margin-bottom and rounded borders */
@@ -132,7 +207,7 @@
             <br>
             <h2>Base de datos:</h2>
             <br>
-            <table class="table table-bordered table-editable">
+            <table id="miTabla" class="table table-bordered table-editable">
                 <thead>
                   <tr>
                       <th width="45%">Número</th>
@@ -141,22 +216,26 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for num,abrev in nums %}
+                  {% for num_id,num,abrev in nums %}
+                  {% csrf_token %}
                     <tr>
-                      <td>{{ num }}</td>
-                      <td>{{ abrev }}</td>
+                      <td id='{{ num_id }}' class="num">{{ num }}</td>
+                      <td class="abrev">{{ abrev }}</td>
                       <td>
                         <span class="add" data-toggle="tooltip"><button type="button"
-                          class="btn btn-success btn-sm">Hecho</button></span>
+                          class="btn btn-success btn-sm" onclick="guardarNumero('{{ num_id }}')">Hecho</button></span>
                         <span class="edit" data-toggle="tooltip"><button type="button"
-                          class="btn btn-warning btn-sm">Editar</button></span>
+                          class="btn btn-warning btn-sm" onclick="editarNumero('{{ num_id }}')">Editar</button></span>
                         <span class="delete"><button type="button"
-                          class="btn btn-danger btn-sm">Eliminar</button></span>
+                          class="btn btn-danger btn-sm" onclick="eliminarNumero('{{ num_id }}')">Eliminar</button></span>
                       </td>
                     </tr>
                   {% endfor %}
                 </tbody>
             </table>
+            <br>
+            <br>
+            <br>
         </div>
         <div class="col-sm-2 sidenav2" align="center">
             <a type="button" href="/" class="btn btn-light" style="font-family: 'Ubuntu'">Inicio</a>

@@ -22,4 +22,5 @@ urlpatterns = [
     path('', views.index, name="index"),
     path('load/', views.load, name="load"),
     path('edit/', views.edit, name="edit"),
+    path('delete/', views.delete, name="delete"),
 ]
