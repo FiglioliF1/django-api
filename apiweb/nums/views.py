@@ -44,18 +44,26 @@ def load(request):
     hoja = documento.sheet_by_index(0)
     filas = hoja.nrows
     aux = []
-
+    ids = []
+    for it in Numero.objects.all():
+        ids.append(it.num_id)
     for i in range(filas):
         num = unidecode.unidecode(str(hoja.cell_value(i,0)))
         abrev = unidecode.unidecode(str(hoja.cell_value(i,1)))
         if not num.isnumeric():
             continue
         try:
-            Numero.objects.get_or_create(numero=num,abrev=abrev)
-            aux.append(tuple([str(num),str(abrev)]))
-            print(str(i) + ") Entrada creada (" + str(num) + " - " + str(abrev) + ")")
+            obj = Numero.objects.get(numero=num)
+            print("Ya existe: " + str(num))
         except:
-            print("Error con la linea: " + str(i))
+            i = 1
+            while i in ids:
+                i = i +1
+            ob = Numero.objects.create(num_id=i,numero=num,abrev=abrev)
+            ob.save()
+            ids.append(i)
+            print("Guardado: " + str(num))
+            aux.append(tuple([str(num),str(abrev)]))
     return render(request, 'formulario.html', {"data":aux})
 
 def index(request):
