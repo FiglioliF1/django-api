@@ -69,14 +69,18 @@ def load(request):
             obj = Numero.objects.get(numero=num)
             print("Ya existe: " + str(num))
         except:
-            i = 1
-            while i in ids:
-                i = i +1
-            ob = Numero.objects.create(num_id=i,numero=num,abrev=abrev)
-            ob.save()
-            ids.append(i)
-            print("Guardado: " + str(num))
-            aux.append(tuple([str(num),str(abrev)]))
+            try:
+                obj = Numero.objects.get(abrev=abrev)
+                print("Ya existe: " + str(num))
+            except:
+                i = 1
+                while i in ids:
+                    i = i +1
+                ob = Numero.objects.create(num_id=i,numero=num,abrev=abrev)
+                ob.save()
+                ids.append(i)
+                print("Guardado: " + str(num))
+                aux.append(tuple([str(num),str(abrev)]))
     return render(request, 'formulario.html', {"data":aux})
 
 def index(request):
