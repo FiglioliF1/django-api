@@ -24,10 +24,23 @@ def edit(request):
     num_id = request.POST.get('num_id')
     num = request.POST.get('num')
     abrev = request.POST.get('abrev')
+
+    #Chequeo si el nuevo número o abreviación ya existen
+    aux = Numero.objects.filter(numero=num)
+    for i in aux:
+        print("1 " + str(i))
+        if str(i.num_id) != str(num_id):
+            return HttpResponse("Ese número ya está en uso")
+    aux = Numero.objects.filter(abrev=abrev)
+    for i in aux:
+        print("2 " + str(i))
+        if str(i.num_id) != str(num_id):
+            return HttpResponse("Esa abreviación ya está en uso")
+
     obj = Numero.objects.get(num_id=num_id)
     obj.numero = num
     obj.abrev = abrev
-    print("id: " + str(obj.num_id)+ " - Num: " + str(obj.numero) + " - Abrev: " + str(abrev))
+    print("Modificado - ID: " + str(obj.num_id)+ " -> Num: " + str(obj.numero) + " - Abrev: " + str(abrev))
     obj.save()
     return HttpResponse("Actualizado")
 

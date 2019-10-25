@@ -10,6 +10,9 @@
       <link rel="shortcut icon" href=" {% static 'nums/favicon.ico.png' %}" type="image/x-icon">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+      <script>
+         var numeros = {{ nums|safe }};
+      </script>
       <script type="text/javascript">
           $(document).ready(function(){
               $('[data-toggle="tooltip"]').tooltip();
@@ -38,12 +41,11 @@
             });
             $(aux1).parents("tr").find(".add, .edit").toggle();
           }
-          function guardarNumero(num_id) {
+          function guardarNumero(num_id,nums) {
             //var csrftoken = $('[name="csrfmiddlewaretoken"]').val();
             var empty = false;
             num = document.getElementById("0-" + num_id).value;
             abrev = document.getElementById("1-" + num_id).value;
-            //window.alert();
             $.ajax({
                url: '/edit/',
                //data: {'num_id':num_id, 'num': numEditable, "abrev": abrevEditable, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
@@ -54,24 +56,29 @@
               },
                method: 'post'
              }).done(function(response){
-               console.log(response);
+               if(response=="Actualizado"){
+                 var input = $(aux1).parents("tr").find('input[type="text"]');
+                    input.each(function(){
+              			if(!$(this).val()){
+              				$(this).addClass("error");
+              				empty = true;
+              			} else{
+                              $(this).removeClass("error");
+                          }
+              		});
+              		$(aux1).parents("tr").find(".error").first().focus();
+              		if(!empty){
+              			input.each(function(){
+              				$(this).parent("td").html($(this).val());
+              			});
+            			$(aux1).parents("tr").find(".add, .edit").toggle();
+                  console.log(response)
+              		}
+                }
+                else{
+                  window.alert(response)
+                }
              });
-           		var input = $(aux1).parents("tr").find('input[type="text"]');
-                 input.each(function(){
-           			if(!$(this).val()){
-           				$(this).addClass("error");
-           				empty = true;
-           			} else{
-                           $(this).removeClass("error");
-                       }
-           		});
-           		$(aux1).parents("tr").find(".error").first().focus();
-           		if(!empty){
-           			input.each(function(){
-           				$(this).parent("td").html($(this).val());
-           			});
-         			$(aux1).parents("tr").find(".add, .edit").toggle();
-           		}
           }
         /*$(document).ready(function(){
           var num_id = 0;
