@@ -78,6 +78,13 @@
   <div class="row content">
     <div class="col-sm-2 sidenav">
       <a type="button" href="/load" class="btn btn-light" style="font-family: 'Ubuntu'">Cargar datos</a>
+      {% if user.is_authenticated %}
+        <br>
+        <br>
+        <br>
+        <br>
+        <li><a href="{% url 'logout' %}">Salir</a></li>
+      {% endif %}
     </div>
     <div class="col-sm-8 text-center" style="font-family: 'Ubuntu'">
       <h2>Obtención de abreviación numérica</h2>

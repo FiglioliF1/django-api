@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from nums.models import Numero
 from rest_framework.response import Response
 from django.http import HttpResponse
@@ -13,6 +14,7 @@ def delete(request):
     obj.delete()
     return HttpResponse("Eliminado")
 
+@login_required
 def edit(request):
     template = "editar.html"
     nums = []
@@ -28,12 +30,10 @@ def edit(request):
     #Chequeo si el nuevo número o abreviación ya existen
     aux = Numero.objects.filter(numero=num)
     for i in aux:
-        print("1 " + str(i))
         if str(i.num_id) != str(num_id):
             return HttpResponse("Ese número ya está en uso")
     aux = Numero.objects.filter(abrev=abrev)
     for i in aux:
-        print("2 " + str(i))
         if str(i.num_id) != str(num_id):
             return HttpResponse("Esa abreviación ya está en uso")
 
@@ -44,6 +44,7 @@ def edit(request):
     obj.save()
     return HttpResponse("Actualizado")
 
+@login_required
 def load(request):
     template = "formulario.html"
     if request.method == 'GET':
