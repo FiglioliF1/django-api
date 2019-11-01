@@ -7,7 +7,19 @@ from django.http import HttpResponse
 from xlrd import open_workbook
 import unidecode
 
+
 # Create your views here.
+@login_required
+def add(request):
+    if request.method == 'GET':
+        ind = 1
+        for it in Numero.objects.all():
+            if ind != it.num_id:
+                break
+            ind = ind + 1
+        return HttpResponse(ind)
+
+@login_required
 def delete(request):
     num_id = request.POST.get('num_id')
     obj = Numero.objects.get(num_id=num_id)
@@ -24,9 +36,9 @@ def edit(request):
     if request.method == 'GET':
         return render(request, template, {"nums":nums})
     num_id = request.POST.get('num_id')
+
     num = request.POST.get('num')
     abrev = request.POST.get('abrev')
-
     #Chequeo si el nuevo número o abreviación ya existen
     aux = Numero.objects.filter(numero=num)
     for i in aux:
@@ -37,6 +49,23 @@ def edit(request):
         if str(i.num_id) != str(num_id):
             return HttpResponse("Esa abreviación ya está en uso")
 
+    #Si recibo un num_id que no existe, siginifica que lo tengo que agregar
+    aux = Numero.objects.filter(num_id=num_id)
+    aux1 = '0'
+    if not aux:
+        aux1 = abrev
+        if abrev.startswith('*'):
+            aux1 = aux1[1:]
+        else:
+            abrev = "*" + abrev
+        print("Se crea: numero: " + num + " abrev: " + abrev)
+        if aux1.isnumeric():
+            ob = Numero.objects.create(num_id=num_id,numero=num,abrev=abrev)
+            ob.save()
+            return HttpResponse("Creado")
+        else:
+            return HttpResponse("Caracteres inaceptables")
+
     obj = Numero.objects.get(num_id=num_id)
     obj.numero = num
     obj.abrev = abrev
@@ -46,7 +75,7 @@ def edit(request):
 
 @login_required
 def load(request):
-    template = "formulario.html"
+    template = "carga.html"
     if request.method == 'GET':
         return render(request, template, {})
     data = request.FILES['file']
@@ -82,7 +111,7 @@ def load(request):
                 ids.append(i)
                 print("Guardado: " + str(num))
                 aux.append(tuple([str(num),str(abrev)]))
-    return render(request, 'formulario.html', {"data":aux})
+    return render(request, 'carga.html', {"data":aux})
 
 def index(request):
     template = "index.html"

@@ -11,13 +11,38 @@
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
       <script>
-         var numeros = {{ nums|safe }};
+         var act =[];
       </script>
       <script type="text/javascript">
           $(document).ready(function(){
               $('[data-toggle="tooltip"]').tooltip();
-              var actions = $("table td:last-child").html();
-          });
+              var actions = $("table td:last-child").html();});
+          function agregarNumero(){
+            aux = document.getElementById("Nuevo");
+            $(aux).attr("disabled", "disabled");
+            var actions = $("table td:last-child").html();
+        		var index = $("table tbody tr:last-child").index();
+            var num_id = 0;
+            $.ajax({
+               type: 'GET',
+               url: '/add/',
+               dataTyoe: 'text',
+               success: function(response){
+                 num_id = response;
+                 var row = '<tr><td id=' + num_id + '><input type="text" class="form-control" id="0-' + num_id + '"></td>' +
+                         '<td><input type="text" class="form-control" id="1-' + num_id + '"></td>' +
+                         '<td><span class="add" data-toggle="tooltip"><button type="button" class="btn btn-success btn-sm" onclick="guardarNumero(' + num_id + ')">Hecho</button></span> ' +
+                         '<span class="edit" data-toggle="tooltip"><button type="button" class="btn btn-warning btn-sm" onclick="editarNumero(' + num_id +',0,0)">Editar</button></span> ' +
+                   '<span class="delete"><button type="button"' +
+                     'class="btn btn-danger btn-sm" onclick="eliminarNumero(' + num_id + ')">Eliminar</button></span></td></tr>';
+                 	//$("table").preappend(row);
+                $('table > tbody > tr:first').before(row)
+             		$("table tbody tr").eq(0).find(".add, .edit").toggle();
+                $('[data-toggle="tooltip"]').tooltip();
+                //window.scrollTo(0,document.body.scrollHeight);
+               }
+             });
+          }
           function eliminarNumero(num_id) {
             aux1 = document.getElementById(num_id);
             $(aux1).parents("tr").remove();
@@ -31,21 +56,40 @@
              }).done(function(response){
                console.log(response);
              });
+            $(boton_nuevo).removeAttr("disabled");
           }
-          function editarNumero(num_id) {
-            var ind = 0
+          function editarNumero(num_id,num,abrev) {
+            var ind = 0;
+            act.push({"num_id":num_id,"num":num,"abrev":abrev})
             aux1 = document.getElementById(num_id);
             $(aux1).parents("tr").find("td:not(:last-child)").each(function(){
-            $(this).html('<input type="text" id="' + ind + '-' + num_id + '" class="form-control" value="' + $(this).text() + '">');
-            ind = ind + 1;
+              $(this).html('<input type="text" id="' + ind + '-' + num_id + '" class="form-control" value="' + $(this).text() + '">');
+              ind = ind + 1;
             });
             $(aux1).parents("tr").find(".add, .edit").toggle();
           }
-          function guardarNumero(num_id,nums) {
+          function guardarNumero(num_id) {
             //var csrftoken = $('[name="csrfmiddlewaretoken"]').val();
+            aux1 = document.getElementById(num_id);
+            boton_nuevo = document.getElementById("Nuevo");
+            var input = $(aux1).parents("tr").find('input[type="text"]');
             var empty = false;
+            input.each(function(){
+            if(!$(this).val()){
+              $(this).addClass("error");
+              empty = true;
+            } else{
+                      $(this).removeClass("error");
+                  }
+            });
+            if (empty) {
+              return;
+            }
             num = document.getElementById("0-" + num_id).value;
             abrev = document.getElementById("1-" + num_id).value;
+            if(!abrev.startsWith('*')){
+              abrev = '*' + abrev;
+            }
             $.ajax({
                url: '/edit/',
                //data: {'num_id':num_id, 'num': numEditable, "abrev": abrevEditable, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
@@ -53,81 +97,45 @@
                        "num" : num,
                        "abrev" : abrev,
                        "csrfmiddlewaretoken" : '{{ csrf_token }}',
-              },
+                     },
                method: 'post'
              }).done(function(response){
-               if(response=="Actualizado"){
-                 var input = $(aux1).parents("tr").find('input[type="text"]');
-                    input.each(function(){
-              			if(!$(this).val()){
-              				$(this).addClass("error");
-              				empty = true;
-              			} else{
-                              $(this).removeClass("error");
-                          }
-              		});
-              		$(aux1).parents("tr").find(".error").first().focus();
+               if(response=="Actualizado" || response == "Creado"){
               		if(!empty){
+                    i = 0;
               			input.each(function(){
-              				$(this).parent("td").html($(this).val());
+                      if(i!=0){
+                        $(this).parent("td").html(abrev);
+                      }else{
+              				  $(this).parent("td").html($(this).val());
+                      }
+                      i = i + 1;
               			});
-            			$(aux1).parents("tr").find(".add, .edit").toggle();
                   console.log(response)
               		}
+                  if(response == "Creado"){
+                    if($("#myAlert").find("div#myAlert2").length==0){
+                      $("#myAlert").append("<div class='alert alert-success alert-dismissable' style='height:45px;' id='myAlert2'> <button type='button' class='close' data-dismiss='alert'  aria-hidden='true'>&times;</button> <p style='font-size: 16px; text-align: center;'>Elemento creado correctamente</div>");
+                    }
+                    $("#myAlert").css("display", "");
+                  }
                 }
                 else{
-                  window.alert(response)
+                  window.alert(response);
+                  var found = act.find(function(element) {
+                    return element["num_id"] == num_id;
+                  });
+              		input[0].value = found["num"];
+                  input[1].value = found["abrev"];
+                  input.each(function(){
+                    $(this).parent("td").html($(this).val());
+                  });
                 }
+                act = act.filter( el => el.num_id !== num_id);
+                $(aux1).parents("tr").find(".add, .edit").toggle();
              });
+             $(boton_nuevo).removeAttr("disabled");
           }
-        /*$(document).ready(function(){
-          var num_id = 0;
-          var num = 0;
-          var abrev = 0;
-        	$('[data-toggle="tooltip"]').tooltip();
-        	var actions = $("table td:last-child").html();
-          $(document).on("click", ".delete", function(){
-            $(this).parents("tr").remove();
-          $(".add-new").removeAttr("disabled");
-          });
-          $(document).on("click", ".add", function(){
-        		var empty = false;
-        		var input = $(this).parents("tr").find('input[type="text"]');
-              input.each(function(){
-        			if(!$(this).val()){
-        				$(this).addClass("error");
-        				empty = true;
-        			} else{
-                        $(this).removeClass("error");
-                    }
-        		});
-        		$(this).parents("tr").find(".error").first().focus();
-        		if(!empty){
-        			input.each(function(){
-        				$(this).parent("td").html($(this).val());
-        			});
-        			$(this).parents("tr").find(".add, .edit").toggle();
-        			$(".add-new").removeAttr("disabled");
-        		}
-            num = $(this).parents("tr").find(".num").innerHTML;
-            abrev = $(this).parents("tr").find(".abrev").innerHTML;
-            num_id = $(this).parents("tr").find(".num_id").innerHTML;
-            $.ajax({
-               url: '/edit/',
-               data: {'num_id':num_id, 'num': num, "abrev": abrev, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
-               method: 'post'
-             }).done(function(response){
-               console.log(response);
-             });
-          });
-          $(document).on("click", ".edit", function(){
-            $(this).parents("tr").find("td:not(:last-child)").each(function(){
-        		$(this).html('<input type="text" class="form-control" value="' + $(this).text() + '">');
-        		});
-        		$(this).parents("tr").find(".add, .edit").toggle();
-        		$(".add-new").attr("disabled", "disabled");
-          });
-        });*/
       </script>
       <style>
           /* Remove the navbar's default margin-bottom and rounded borders */
@@ -161,7 +169,7 @@
             background-color: #f0f0f0;
             height: 100%;
             position: fixed;
-            top: 132;
+            top: 100;
             right: 0;
 
           }
@@ -170,7 +178,7 @@
             background-color: #f0f0f0;
             height: 100%;
             position: fixed;
-            top: 132;
+            top: 100;
             left: 0;
           }
 
@@ -180,6 +188,10 @@
             color: white;
             padding: 15px;
           }
+
+          table.table .form-control.error {
+        		border-color: #f50000;
+        	}
 
           /* On small screens, set height to 'auto' for sidenav and grid */
           @media screen and (max-width: 767px) {
@@ -195,7 +207,7 @@
     <nav class="navbar navbar-static-top">
       <div class="container-fluid">
         <div class="navbar-header">
-          <img src=" {% static 'nums/logo_gba_footer.svg' %}" class="img-fluid">
+          <img src=" {% static 'nums/logo_gba_footer.svg' %}" class="img-fluid" width="220">
         </div>
       </div>
     </nav>
@@ -205,56 +217,64 @@
           <!-- Aca van los links a la izquierda-->
         </div>
         <div class="col-sm-8"  style="font-family: 'Ubuntu'">
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <h2>Base de datos:</h2>
-            <br>
-            <table id="miTabla" class="table table-bordered table-editable">
-                <thead>
+          <br><br><br><br><br><br><br>
+          <div class="table-title" style="padding-bottom: 10px; margin: 0 0 10px;">
+            <div class="row">
+              <div class="col-sm-3" style="margin: 6px 0 0;"><h2>Base de datos:</h2></div>
+              <div class="col-sm-6">
+                <!-- <div class="alert alert-success alert-dismissable" style="display:none; width:80%; height:40px;" id="myAlert"> -->
+                <div class="container" style="width: 80%;display:none;" id="myAlert">
+                    <div class="alert alert-success alert-dismissable" style="height:45px;" id="myAlert2">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <p style="font-size: 16px; text-align: center;">Elemento creado correctamente</p>
+                    </div>
+                </div>
+              </div>
+              <div class="col-sm-3"><button type="button" id="Nuevo"
+                class="btn btn-info" style="float: right; margin-right: 70px; margin-top: 25px; line-height: 25px; min-width: 100px;" onclick="agregarNumero()">Agregar</button></div>
+            </div>
+          </div>
+          <table id="miTabla" class="table table-bordered table-editable">
+              <thead>
+                <tr>
+                    <th width="45%">Número</th>
+                    <th width="35%">Abreviado</th>
+                    <th width="20%">Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for num_id,num,abrev in nums %}
+                {% csrf_token %}
                   <tr>
-                      <th width="45%">Número</th>
-                      <th width="35%">Abreviado</th>
-                      <th width="20%">Acción</th>
+                    <td id='{{ num_id }}' class="num">{{ num }}</td>
+                    <td class="abrev">{{ abrev }}</td>
+                    <td>
+                      <span class="add" data-toggle="tooltip"><button type="button"
+                        class="btn btn-success btn-sm" onclick="guardarNumero('{{ num_id }}')">Hecho</button></span>
+                      <span class="edit" data-toggle="tooltip"><button type="button"
+                        class="btn btn-warning btn-sm" onclick="editarNumero('{{ num_id }}','{{ num }}', '{{ abrev }}')">Editar</button></span>
+                      <span class="delete"><button type="button"
+                        class="btn btn-danger btn-sm" onclick="eliminarNumero('{{ num_id }}')">Eliminar</button></span>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {% for num_id,num,abrev in nums %}
-                  {% csrf_token %}
-                    <tr>
-                      <td id='{{ num_id }}' class="num">{{ num }}</td>
-                      <td class="abrev">{{ abrev }}</td>
-                      <td>
-                        <span class="add" data-toggle="tooltip"><button type="button"
-                          class="btn btn-success btn-sm" onclick="guardarNumero('{{ num_id }}')">Hecho</button></span>
-                        <span class="edit" data-toggle="tooltip"><button type="button"
-                          class="btn btn-warning btn-sm" onclick="editarNumero('{{ num_id }}')">Editar</button></span>
-                        <span class="delete"><button type="button"
-                          class="btn btn-danger btn-sm" onclick="eliminarNumero('{{ num_id }}')">Eliminar</button></span>
-                      </td>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-            </table>
-            <br>
-            <br>
-            <br>
+                {% endfor %}
+              </tbody>
+          </table>
+          <br>
+          <br>
+          <br>
         </div>
         <div class="col-sm-2 sidenav2" align="center">
             <a type="button" href="/" class="btn btn-light" style="font-family: 'Ubuntu'">Inicio</a>
             <br>
-            <a type="button" href="/load" class="btn btn-light" style="font-family: 'Ubuntu'">Cargar datos</a>
+            <a type="button" href="/load" class="btn btn-light" style="font-family: 'Ubuntu'">Carga masiva</a>
             <br>
             <br>
             <br>
             <li><a href="{% url 'logout' %}">Salir</a></li>
         </div>
       <footer class="navbar-fixed-bottom text-center" style="background-color: #444;">
-        <p style="font-size: 16px; font-family: 'Ubuntu';">Dirección Provincial de Telecomunicaciones</p>
+        <p style="font-size: 14px; font-family: 'Ubuntu';">Dirección Provincial de Telecomunicaciones -  Diagonal 74 1366, La Plata</p>
       </footer>
       </div>
     </div>

@@ -34,11 +34,11 @@
 
     /* Set gray background color and 100% height */
     .sidenav1 {
-      padding-top: 20px;
+      padding-top: 10px;
       background-color: #f0f0f0;
       height: 100%;
       position: fixed;
-      top: 132;
+      top: 100;
       right: 0;
 
     }
@@ -47,7 +47,7 @@
       background-color: #f0f0f0;
       height: 100%;
       position: fixed;
-      top: 132;
+      top: 100;
       left: 0;
     }
 
@@ -72,7 +72,7 @@
     <nav class="navbar navbar-static-top">
       <div class="container-fluid">
         <div class="navbar-header">
-          <img src=" {% static 'nums/logo_gba_footer.svg' %}" class="img-fluid">
+          <img src=" {% static 'nums/logo_gba_footer.svg' %}" class="img-fluid" width="220">
           <!--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
              <span class="icon-bar"></span>
             <span class="icon-bar"></span>
@@ -101,7 +101,18 @@
               {% csrf_token %}
               <h3 class="formheader" style="font-family: 'Ubuntu';
                                             font-style:  normal;
-                                            font-size: 24px;"> Carga de datos</h3>
+                                            font-size: 24px;"> Carga masiva de datos</h3>
+              <p>Seleccione una planilla de cálculo con el siguiente formato:</p>
+              <table style="width: 200px;" class="table table-bordered">
+                <tr>
+                  <td style="font-size: 12px;">Columna 1</td>
+                  <td style="font-size: 12px;">Columna 2</td>
+                </tr>
+                <tr>
+                  <td style="font-size: 12px;">Número</td>
+                  <td style="font-size: 12px;">Abreviado</td>
+                </tr>
+              </table>
               <br>
               <input type="file"
                      title="Carga de datos"
@@ -120,7 +131,7 @@
 
           {%if error != null %}
             <br>
-            <div class="row content">
+            <div class="row content" style="height: 100px;">
             <div class="col-md-4">
             </div>
             <div class="col-md-4">
@@ -167,7 +178,7 @@
             <li><a href="{% url 'logout' %}">Salir</a></li>
         </div>
       <footer class="navbar-fixed-bottom text-center" style="background-color: #444;">
-        <p style="font-size: 16px; font-family: 'Ubuntu';">Dirección Provincial de Telecomunicaciones</p>
+        <p style="font-size: 14px; font-family: 'Ubuntu';">Dirección Provincial de Telecomunicaciones - Diagonal 74 1366, La Plata</p>
       </footer>
       </div>
     </div>
