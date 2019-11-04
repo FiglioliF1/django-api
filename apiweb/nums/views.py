@@ -22,10 +22,13 @@ def add(request):
 @login_required
 def delete(request):
     num_id = request.POST.get('num_id')
-    obj = Numero.objects.get(num_id=num_id)
-    log = Log.objects.create(usuario=request.user.username,tipo="Eliminación",numero_viejo=getattr(obj,'numero'),abrev_viejo=getattr(obj,'abrev'),numero_nuevo="-",abrev_nuevo="-")
-    obj.delete()
-    log.save()
+    try:
+        obj = Numero.objects.get(num_id=num_id)
+        log = Log.objects.create(usuario=request.user.username,tipo="Eliminación",numero_viejo=getattr(obj,'numero'),abrev_viejo=getattr(obj,'abrev'),numero_nuevo="-",abrev_nuevo="-")
+        obj.delete()
+        log.save()
+    except:
+        pass
     return HttpResponse("Eliminado")
 
 @login_required
