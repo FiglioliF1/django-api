@@ -29,10 +29,10 @@
                dataTyoe: 'text',
                success: function(response){
                  num_id = response;
-                 var row = '<tr><td id=' + num_id + '><input type="text" class="form-control" id="0-' + num_id + '"></td>' +
-                         '<td><input type="text" class="form-control" id="1-' + num_id + '"></td>' +
+                 var row = '<tr><td id=0-' + num_id + '><input type="text" class="form-control" id="2-' + num_id + '"></td>' +
+                         '<td id=1-' + num_id + '><input type="text" class="form-control" id="3-' + num_id + '"></td>' +
                          '<td><span class="add" data-toggle="tooltip"><button type="button" class="btn btn-success btn-sm" onclick="guardarNumero(' + num_id + ')">Hecho</button></span> ' +
-                         '<span class="edit" data-toggle="tooltip"><button type="button" class="btn btn-warning btn-sm" onclick="editarNumero(' + num_id +',0,0)">Editar</button></span> ' +
+                         '<span class="edit" data-toggle="tooltip"><button type="button" class="btn btn-warning btn-sm" onclick="editarNumero(' + num_id +')">Editar</button></span> ' +
                    '<span class="delete"><button type="button"' +
                      'class="btn btn-danger btn-sm" onclick="eliminarNumero(' + num_id + ')">Eliminar</button></span></td></tr>';
                  	//$("table").preappend(row);
@@ -44,7 +44,8 @@
              });
           }
           function eliminarNumero(num_id) {
-            aux1 = document.getElementById(num_id);
+            boton_nuevo = document.getElementById("Nuevo");
+            aux1 = document.getElementById("0-"+num_id);
             $(aux1).parents("tr").remove();
             $.ajax({
                url: '/delete/',
@@ -58,10 +59,12 @@
              });
             $(boton_nuevo).removeAttr("disabled");
           }
-          function editarNumero(num_id,num,abrev) {
-            var ind = 0;
-            act.push({"num_id":num_id,"num":num,"abrev":abrev})
-            aux1 = document.getElementById(num_id);
+          function editarNumero(num_id) {
+            var ind = 2;
+            num = document.getElementById("0-" + num_id).innerHTML;
+            abrev = document.getElementById("1-" + num_id).innerHTML;
+            act.push({"num_id":num_id,"num":num,"abrev":abrev});
+            aux1 = document.getElementById("0-" + num_id);
             $(aux1).parents("tr").find("td:not(:last-child)").each(function(){
               $(this).html('<input type="text" id="' + ind + '-' + num_id + '" class="form-control" value="' + $(this).text() + '">');
               ind = ind + 1;
@@ -70,7 +73,7 @@
           }
           function guardarNumero(num_id) {
             //var csrftoken = $('[name="csrfmiddlewaretoken"]').val();
-            aux1 = document.getElementById(num_id);
+            aux1 = document.getElementById("2-" + num_id);
             boton_nuevo = document.getElementById("Nuevo");
             var input = $(aux1).parents("tr").find('input[type="text"]');
             var empty = false;
@@ -78,15 +81,15 @@
             if(!$(this).val()){
               $(this).addClass("error");
               empty = true;
-            } else{
+            }else{
                       $(this).removeClass("error");
                   }
             });
             if (empty) {
               return;
             }
-            num = document.getElementById("0-" + num_id).value;
-            abrev = document.getElementById("1-" + num_id).value;
+            num = document.getElementById("2-" + num_id).value;
+            abrev = document.getElementById("3-" + num_id).value;
             if(!abrev.startsWith('*')){
               abrev = '*' + abrev;
             }
@@ -111,7 +114,6 @@
                       }
                       i = i + 1;
               			});
-                  console.log(response)
               		}
                   if(response == "Creado"){
                     if($("#myAlert").find("div#myAlert2").length==0){
@@ -132,6 +134,7 @@
                   });
                 }
                 act = act.filter( el => el.num_id !== num_id);
+                aux1 = document.getElementById("0-" + num_id);
                 $(aux1).parents("tr").find(".add, .edit").toggle();
              });
              $(boton_nuevo).removeAttr("disabled");
@@ -246,13 +249,13 @@
                 {% for num_id,num,abrev in nums %}
                 {% csrf_token %}
                   <tr>
-                    <td id='{{ num_id }}' class="num">{{ num }}</td>
-                    <td class="abrev">{{ abrev }}</td>
+                    <td id='0-{{ num_id }}' class="num">{{ num }}</td>
+                    <td id='1-{{ num_id }}'class="abrev">{{ abrev }}</td>
                     <td>
                       <span class="add" data-toggle="tooltip"><button type="button"
                         class="btn btn-success btn-sm" onclick="guardarNumero('{{ num_id }}')">Hecho</button></span>
                       <span class="edit" data-toggle="tooltip"><button type="button"
-                        class="btn btn-warning btn-sm" onclick="editarNumero('{{ num_id }}','{{ num }}', '{{ abrev }}')">Editar</button></span>
+                        class="btn btn-warning btn-sm" onclick="editarNumero('{{ num_id }}')">Editar</button></span>
                       <span class="delete"><button type="button"
                         class="btn btn-danger btn-sm" onclick="eliminarNumero('{{ num_id }}')">Eliminar</button></span>
                     </td>

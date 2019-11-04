@@ -80,8 +80,8 @@ def load(request):
         return render(request, template, {})
     data = request.FILES['file']
 
-    if not data.name.endswith('.csv') and not data.name.endswith('.xlsx') and not data.name.endswith('.xls'):
-        return render(request, template, {"error":"No es una planilla de cálculo"})
+    if not data.name.endswith('.ods') and not data.name.endswith('.xlsx') and not data.name.endswith('.xls'):
+        return render(request, template, {"error":"No es una planilla de cálculo soportada (.ods, .xls, .xlsx)"})
 
     documento = open_workbook(data.name, file_contents=data.read())
     hoja = documento.sheet_by_index(0)
