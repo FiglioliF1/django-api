@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from nums.models import Numero
+from nums.models import Numero, Log
 from rest_framework.response import Response
 from django.http import HttpResponse
 from xlrd import open_workbook
@@ -23,7 +23,9 @@ def add(request):
 def delete(request):
     num_id = request.POST.get('num_id')
     obj = Numero.objects.get(num_id=num_id)
+    log = Log.objects.create(usuario=request.user.username,tipo="Eliminación",numero_viejo=getattr(obj,'numero'),abrev_viejo=getattr(obj,'abrev'),numero_nuevo="-",abrev_nuevo="-")
     obj.delete()
+    log.save()
     return HttpResponse("Eliminado")
 
 @login_required
@@ -62,15 +64,19 @@ def edit(request):
         if aux1.isnumeric():
             ob = Numero.objects.create(num_id=num_id,numero=num,abrev=abrev)
             ob.save()
+            log = Log.objects.create(usuario=request.user.username,tipo="Creación",numero_viejo="-",abrev_viejo="-",numero_nuevo=num,abrev_nuevo=abrev)
             return HttpResponse("Creado")
         else:
             return HttpResponse("Caracteres inaceptables")
 
     obj = Numero.objects.get(num_id=num_id)
+    n_viejo = obj.numero
+    a_viejo = obj.abrev
     obj.numero = num
     obj.abrev = abrev
     print("Modificado - ID: " + str(obj.num_id)+ " -> Num: " + str(obj.numero) + " - Abrev: " + str(abrev))
     obj.save()
+    log = Log.objects.create(usuario=request.user.username,tipo="Edición",numero_viejo=n_viejo,abrev_viejo=a_viejo,numero_nuevo=num,abrev_nuevo=abrev)
     return HttpResponse("Actualizado")
 
 @login_required
@@ -108,6 +114,7 @@ def load(request):
                     i = i +1
                 ob = Numero.objects.create(num_id=i,numero=num,abrev=abrev)
                 ob.save()
+                log = Log.objects.create(usuario=request.user.username,tipo="Creación",numero_viejo="-",abrev_viejo="-",numero_nuevo=num,abrev_nuevo=abrev)
                 ids.append(i)
                 print("Guardado: " + str(num))
                 aux.append(tuple([str(num),str(abrev)]))

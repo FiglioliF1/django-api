@@ -8,4 +8,8 @@ class Numero(models.Model):
 class Log(models.Model):
     usuario = models.CharField(max_length = 30)
     tipo = models.CharField(max_length = 30)
-    hora = models.DateField(auto_now = True)
+    numero_viejo = models.CharField(max_length = 30)
+    abrev_viejo = models.CharField(max_length = 30)
+    numero_nuevo = models.CharField(max_length = 30)
+    abrev_nuevo = models.CharField(max_length = 30)
+    hora = models.DateTimeField(auto_now = True)
