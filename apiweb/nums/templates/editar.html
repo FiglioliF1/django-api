@@ -7,6 +7,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+      <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Ubuntu" />
       <link rel="shortcut icon" href=" {% static 'nums/favicon.ico.png' %}" type="image/x-icon">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
@@ -190,6 +191,9 @@
             background-color: #555;
             color: white;
             padding: 15px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
           }
 
           table.table .form-control.error {
@@ -198,11 +202,31 @@
 
           /* On small screens, set height to 'auto' for sidenav and grid */
           @media screen and (max-width: 767px) {
-            .sidenav {
+            .sidenav1 {
               height: auto;
-              padding: 15px;
+              padding-top: 20px;
+              background-color: #f0f0f0;
+              position: relative;
+              height: 100%;
             }
-            .row.content {height:auto;}
+
+            .sidenav2 {
+              padding-top: 20px;
+              background-color: #f0f0f0;
+              height: 100%;
+              position: relative;
+            }
+
+            .row.content {
+              height:auto;
+            }
+
+            footer {
+              background-color: #555;
+              color: white;
+              position: static;
+              bottom: 0px;
+            }
           }
   </style>
 </head>
@@ -276,10 +300,10 @@
             <br>
             <li><a href="{% url 'logout' %}">Salir</a></li>
         </div>
-      <footer class="navbar-fixed-bottom text-center" style="background-color: #444;">
-        <p style="font-size: 14px; font-family: 'Ubuntu';">Dirección Provincial de Telecomunicaciones -  Diagonal 74 1366, La Plata</p>
-      </footer>
       </div>
     </div>
+    <footer class="text-center" style="background-color: #444;">
+      <p style="font-size: 14px; font-family: 'Ubuntu';">Dirección Provincial de Telecomunicaciones -  Diagonal 74 1366, La Plata</p>
+    </footer>
 </body>
 </html>

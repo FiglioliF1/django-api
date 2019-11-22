@@ -7,10 +7,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="shortcut icon" href=" {% static 'nums/favicon.ico.png' %}" type="image/x-icon">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Ubuntu" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
   <style>
     /* Remove the navbar's default margin-bottom and rounded borders */
+    html, body {
+      height: 100%;
+    }
+
     .navbar {
       margin-bottom: 0;
       border-radius: 0;
@@ -22,17 +27,17 @@
      font-size: 18px;"
    }
 
-
     /* Set height of the grid so .sidenav can be 100% (adjust as needed)*/
     .row.content {
-      height: 546px
+      height: 100%;
     }
 
     /* Set gray background color and 100% height */
     .sidenav {
       padding-top: 20px;
       background-color: #f1f1f1;
-      height: 100%;
+      position: relative;
+      height: 537px;
     }
 
     /* Set black background color, white text and some padding */
@@ -40,15 +45,53 @@
       background-color: #555;
       color: white;
       padding: 15px;
+      position: static;
+      width: 100%;
+      bottom:0;
     }
 
     /* On small screens, set height to 'auto' for sidenav and grid */
-    @media screen and (max-width: 767px) {
+    @media screen and (max-width: 1000px) {
       .sidenav {
-        height: auto;
-        padding: 15px;
+        padding-top: 2px;
+        height: 10px;
       }
-      .row.content {height:auto;}
+
+      .img-fluid {
+        width: 100px
+      }
+
+      .row.content {
+        height:670px;
+      }
+      .mi-fuente {
+        font-family: 'Ubuntu';
+        font-style:  normal;
+        font-size: 11px;"
+      }
+
+      h2 {
+        font-size: 18px;
+      }
+
+      p {
+        font-size: 11px;
+      }
+
+      footer {
+        background-color: #555;
+        color: white;
+        position: static;
+        bottom: 0;
+      }
+    }
+    @media screen and (min-height: 800px) {
+      .sidenav {
+        padding-top: 20px;
+        background-color: #f1f1f1;
+        position: relative;
+        height: 437px;
+      }
     }
   </style>
 </head>
@@ -74,7 +117,8 @@
   </div>
 </nav>
 
-<div class="container-fluid text-center">
+<!-- <div class="container-fluid text-center"> -->
+<div class="container-fluid d-flex flex-column">
   <div class="row content">
     <div class="col-sm-2 sidenav">
       <!-- <a type="button" href="/load" class="btn btn-light" style="font-family: 'Ubuntu'">Cargar datos</a> -->
@@ -125,8 +169,8 @@
             <table class="table">
             <tbody>
               <tr>
-                <td>Número</td>
-                <td>{{ num }}</td>
+                <td><p>Número</p></td>
+                <td><p>{{ num }}</p></td>
               </tr>
               <tr>
                 <td>Abreviado</td>
@@ -151,8 +195,17 @@
     <div class="col-sm-2 sidenav">
     </div>
   </div>
+  <div class="row">
+    <div class="col-sm-2 sidenav" style="height: 60px;">
+    </div>
+    <div class="col-sm-8">
+      <p style="position: relative; bottom: 40px;">Si por razones laborales Ud. necesita usualmente comunicarse con uno o más números a los que no puede acceder por tener salida restringida a la red pública y/o red de celulares, puede solicitar la creación de un número abreviado para cada uno de esos destinos. El pedido deberá realizarlo vía nota por GDEBA, dirigida al Director Provincial de Telecomunicaciones, a través de un directivo de su organización con firma autorizada.</p>
+    </div>
+    <div class="col-sm-2 sidenav" style="height: 60px;">
+    </div>
+  </div>
 </div>
-<footer class="navbar-fixed-bottom text-center" style="background-color: #444;">
+<footer class="text-center" style="background-color: #444;">
   <p style="font-size: 14px;">Dirección Provincial de Telecomunicaciones - Diagonal 74 1366, La Plata</p>
 </footer>
 </body>
