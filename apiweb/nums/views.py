@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from django.http import HttpResponse
 from xlrd import open_workbook
 import unidecode
+import numbers
 
 
 # Create your views here.
@@ -89,8 +90,8 @@ def load(request):
         return render(request, template, {})
     data = request.FILES['file']
 
-    if not data.name.endswith('.ods') and not data.name.endswith('.xlsx') and not data.name.endswith('.xls'):
-        return render(request, template, {"error":"No es una planilla de cálculo soportada (.ods, .xls, .xlsx)"})
+    if not data.name.endswith('.xlsx') and not data.name.endswith('.xls'):
+        return render(request, template, {"error":"No es una planilla de cálculo soportada (.xls, .xlsx)"})
 
     documento = open_workbook(data.name, file_contents=data.read())
     hoja = documento.sheet_by_index(0)
@@ -102,6 +103,9 @@ def load(request):
     for i in range(filas):
         num = unidecode.unidecode(str(hoja.cell_value(i,0)))
         abrev = unidecode.unidecode(str(hoja.cell_value(i,1)))
+        if num.endswith(".0") and abrev.endswith(".0"):
+            num = num[:-2]
+            abrev = abrev[:-2]
         if not num.isnumeric():
             continue
         try:
