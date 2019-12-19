@@ -11,6 +11,8 @@
       <link rel="shortcut icon" href=" {% static 'nums/favicon.ico.png' %}" type="image/x-icon">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.css">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.4/jquery-confirm.min.js"></script>
       <script>
          var act =[];
       </script>
@@ -47,17 +49,37 @@
           function eliminarNumero(num_id) {
             boton_nuevo = document.getElementById("Nuevo");
             aux1 = document.getElementById("0-"+num_id);
-            $(aux1).parents("tr").remove();
-            $.ajax({
-               url: '/delete/',
-               //data: {'num_id':num_id, 'num': numEditable, "abrev": abrevEditable, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
-               data: { "num_id" : num_id,
-                       "csrfmiddlewaretoken" : '{{ csrf_token }}',
-               },
-               method: 'post'
-             }).done(function(response){
-               console.log(response);
-             });
+            contenido = aux1.innerText;
+            if(contenido == ''){
+              $(aux1).parents("tr").remove();
+              $(boton_nuevo).removeAttr("disabled");
+              return;
+            }
+
+            $.confirm({
+              animation: 'none',
+              title: '¿Eliminar?',
+              content: contenido,
+              confirmKey: 'confirmar',
+              escapeKey: 'cancelar',
+              buttons: {
+                  confirmar: function () {
+                    $(aux1).parents("tr").remove();
+                    $.ajax({
+                       url: '/delete/',
+                       //data: {'num_id':num_id, 'num': numEditable, "abrev": abrevEditable, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                       data: { "num_id" : num_id,
+                               "csrfmiddlewaretoken" : '{{ csrf_token }}',
+                       },
+                       method: 'post'
+                     }).done(function(response){
+                       console.log(response);
+                     });
+                  },
+                  cancelar: function () {
+                  }
+              }
+            });
             $(boton_nuevo).removeAttr("disabled");
           }
           function editarNumero(num_id) {
