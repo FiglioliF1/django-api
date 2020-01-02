@@ -55,13 +55,15 @@
               $(boton_nuevo).removeAttr("disabled");
               return;
             }
-
             $.confirm({
-              animation: 'none',
               title: '¿Eliminar?',
               content: contenido,
               confirmKey: 'confirmar',
               escapeKey: 'cancelar',
+              typeAnimated: false,
+              animateFromElement: false,
+              animation: 'zoom',
+              closeAnimation: 'zoom',
               buttons: {
                   confirmar: function () {
                     $(aux1).parents("tr").remove();
